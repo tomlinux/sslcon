@@ -56,7 +56,7 @@ func SetRoutes(cSess *session.ConnSession) error {
 	// 	err = setDNS(cSess)
 	// }
 
-	// return err
+	return err
 }
 
 func ResetRoutes(cSess *session.ConnSession) {

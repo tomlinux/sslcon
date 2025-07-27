@@ -79,10 +79,10 @@ func SetRoutes(cSess *session.ConnSession) error {
 	}
 
 	// dns
-	if len(cSess.DNS) > 0 {
-		err = setDNS(cSess)
-	}
-	return err
+	// if len(cSess.DNS) > 0 {
+	// 	err = setDNS(cSess)
+	// }
+	// return err
 }
 
 func ResetRoutes(cSess *session.ConnSession) {

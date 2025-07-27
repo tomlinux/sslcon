@@ -86,9 +86,9 @@ func SetRoutes(cSess *session.ConnSession) error {
 		}
 	}
 
-	if len(cSess.DNS) > 0 {
-		setDNS(cSess)
-	}
+	// if len(cSess.DNS) > 0 {
+	// 	setDNS(cSess)
+	// }
 
 	return nil
 }
@@ -130,9 +130,9 @@ func ResetRoutes(cSess *session.ConnSession) {
 		})
 	}
 
-	if len(cSess.DNS) > 0 {
-		restoreDNS(cSess)
-	}
+	// if len(cSess.DNS) > 0 {
+	// 	restoreDNS(cSess)
+	// }
 }
 
 func DynamicAddIncludeRoutes(ips []string) {

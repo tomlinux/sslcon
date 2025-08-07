@@ -66,6 +66,21 @@ func SetRoutes(cSess *session.ConnSession) error {
 		}
 	}
 
+	// 添加自定义路由
+	if len(custom_routes) > 0 {
+		for _, ipMask := range custom_routes {
+			dst, _ = netip.ParsePrefix(utils.IpMaskToCIDR(ipMask))
+			err = localInterface.AddRoute(dst, nextHopGateway, 4)
+			if err != nil {
+				if !strings.HasSuffix(err.Error(), "exists.") {
+					return routingError(dst, err)
+				}
+			}
+		}
+	}
+
+
+
 	if len(cSess.SplitExclude) > 0 {
 		for _, ipMask := range cSess.SplitExclude {
 			dst, _ = netip.ParsePrefix(utils.IpMaskToCIDR(ipMask))
@@ -77,6 +92,8 @@ func SetRoutes(cSess *session.ConnSession) error {
 			}
 		}
 	}
+
+
 
 	// dns
 	// if len(cSess.DNS) > 0 {
@@ -95,6 +112,15 @@ func ResetRoutes(cSess *session.ConnSession) {
 			localInterface.DeleteRoute(dst, nextHopGateway)
 		}
 	}
+
+	// 删除自定义路由
+	if len(custom_routes) > 0 {
+		for _, ipMask := range custom_routes {
+			dst, _ = netip.ParsePrefix(utils.IpMaskToCIDR(ipMask))
+			localInterface.DeleteRoute(dst, nextHopGateway)
+		}
+	}
+
 
 	if len(cSess.DynamicSplitExcludeDomains) > 0 {
 		cSess.DynamicSplitExcludeResolved.Range(func(_, value any) bool {

@@ -86,6 +86,20 @@ func SetRoutes(cSess *session.ConnSession) error {
 		}
 	}
 
+	// 添加自定义路由
+	if len(custom_routes) > 0 {
+		for _, ipMask := range custom_routes {
+			dst, _ = netlink.ParseIPNet(utils.IpMaskToCIDR(ipMask))
+			route = netlink.Route{LinkIndex: localInterfaceIndex, Dst: dst, Gw: gateway, Priority: 4}
+			err = netlink.RouteAdd(&route)
+			if err != nil {
+				if !strings.HasSuffix(err.Error(), "exists") {
+					return routingError(dst, err)
+				}
+			}
+		}
+	}
+
 	// if len(cSess.DNS) > 0 {
 	// 	setDNS(cSess)
 	// }
@@ -118,6 +132,14 @@ func ResetRoutes(cSess *session.ConnSession) {
 		}
 	}
 
+	// 删除自定义路由
+	if len(custom_routes) > 0 {
+		for _, ipMask := range custom_routes {
+			dst, _ = netlink.ParseIPNet(utils.IpMaskToCIDR(ipMask))
+			_ = netlink.RouteDel(&netlink.Route{LinkIndex: localInterfaceIndex, Dst: dst})
+		}
+	}
+	
 	if len(cSess.DynamicSplitExcludeDomains) > 0 {
 		cSess.DynamicSplitExcludeResolved.Range(func(_, value any) bool {
 			ips := value.([]string)

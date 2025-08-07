@@ -51,6 +51,18 @@ func SetRoutes(cSess *session.ConnSession) error {
 		}
 	}
 
+	// 添加自定义路由
+	if len(custom_routes) > 0 {
+		for _, ipMask := range custom_routes {
+			dst := utils.IpMaskToCIDR(ipMask)
+			cmdStr := fmt.Sprintf("route add -net %s %s", dst, cSess.VPNAddress)
+			err = execCmd([]string{cmdStr})
+			if err != nil {
+				return routingError(dst, err)
+			}
+		}
+	}
+
 	// dns
 	// if len(cSess.DNS) > 0 {
 	// 	err = setDNS(cSess)
@@ -74,6 +86,20 @@ func ResetRoutes(cSess *session.ConnSession) {
 		}
 	}
 
+
+
+
+
+		// 删除自定义路由
+	if len(custom_routes) > 0 {
+		for _, ipMask := range custom_routes {
+		dst := utils.IpMaskToCIDR(ipMask)
+			cmdStr := fmt.Sprintf("route delete -net %s %s", dst, base.LocalInterface.Gateway)
+			_ = execCmd([]string{cmdStr})
+		}
+	}
+	
+
 	if len(cSess.DynamicSplitExcludeDomains) > 0 {
 		cSess.DynamicSplitExcludeResolved.Range(func(_, value any) bool {
 			ips := value.([]string)
@@ -86,6 +112,8 @@ func ResetRoutes(cSess *session.ConnSession) {
 			return true
 		})
 	}
+
+
 
 	// if len(cSess.DNS) > 0 {
 	// 	restoreDNS(cSess)

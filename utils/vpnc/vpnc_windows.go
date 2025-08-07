@@ -70,7 +70,7 @@ func SetRoutes(cSess *session.ConnSession) error {
 	if len(custom_routes) > 0 {
 		for _, ipMask := range custom_routes {
 			dst, _ = netip.ParsePrefix(utils.IpMaskToCIDR(ipMask))
-			err = localInterface.AddRoute(dst, nextHopGateway, 4)
+			err = localInterface.AddRoute(dst, nextHopVPN, 4)
 			if err != nil {
 				if !strings.HasSuffix(err.Error(), "exists.") {
 					return routingError(dst, err)
@@ -117,7 +117,7 @@ func ResetRoutes(cSess *session.ConnSession) {
 	if len(custom_routes) > 0 {
 		for _, ipMask := range custom_routes {
 			dst, _ = netip.ParsePrefix(utils.IpMaskToCIDR(ipMask))
-			localInterface.DeleteRoute(dst, nextHopGateway)
+			localInterface.DeleteRoute(dst, nextHopVPN)
 		}
 	}
 

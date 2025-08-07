@@ -94,7 +94,7 @@ func ResetRoutes(cSess *session.ConnSession) {
 	if len(custom_routes) > 0 {
 		for _, ipMask := range custom_routes {
 		dst := utils.IpMaskToCIDR(ipMask)
-			cmdStr := fmt.Sprintf("route delete -net %s %s", dst, base.LocalInterface.Gateway)
+			cmdStr := fmt.Sprintf("route delete -net %s %s", dst, cSess.VPNAddress)
 			_ = execCmd([]string{cmdStr})
 		}
 	}

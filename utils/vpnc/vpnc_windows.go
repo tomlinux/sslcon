@@ -67,10 +67,14 @@ func SetRoutes(cSess *session.ConnSession) error {
 	}
 
 	// 添加自定义路由
+// 	winipcfg 的 AddRoute 是按接口 LUID 添加的：
+// localInterface → 本地物理网卡
+// iface → VPN 虚拟网卡
+
 	if len(custom_routes) > 0 {
 		for _, ipMask := range custom_routes {
 			dst, _ = netip.ParsePrefix(utils.IpMaskToCIDR(ipMask))
-			err = localInterface.AddRoute(dst, nextHopVPN, 2)
+			err = iface.AddRoute(dst, nextHopVPN, 2)
 			if err != nil {
 				if !strings.HasSuffix(err.Error(), "exists.") {
 					return routingError(dst, err)
@@ -78,8 +82,6 @@ func SetRoutes(cSess *session.ConnSession) error {
 			}
 		}
 	}
-
-
 
 	if len(cSess.SplitExclude) > 0 {
 		for _, ipMask := range cSess.SplitExclude {
